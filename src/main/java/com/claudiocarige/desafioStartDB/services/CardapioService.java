@@ -13,7 +13,7 @@ public interface CardapioService {
 
     Cardapio insert(CardapioRepresentation obj);
 
-    Cardapio Updat(Long id, Cardapio obj);
+    Cardapio update(CardapioRepresentation obj);
 
     void delete(Long id);
 

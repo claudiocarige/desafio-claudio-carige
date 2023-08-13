@@ -42,4 +42,12 @@ public class CardapioController {
                 .toUri();
         return ResponseEntity.created(uri).build();
     }
-}
+
+    @PostMapping(value = "/{id}")
+    public ResponseEntity<CardapioRepresentation> update(@PathVariable Long id,
+                                    @RequestBody CardapioRepresentation cardapioRepresentation){
+        cardapioRepresentation.setId(id);
+        return ResponseEntity.ok().body(mapper.map(cardapioService.update(cardapioRepresentation),
+                CardapioRepresentation.class));
+    }
+ }

@@ -1,4 +1,4 @@
-package com.claudiocarige.desafioStartDB.services;
+package com.claudiocarige.desafioStartDB.services.exceptions;
 
 public class NoSuchElementException extends RuntimeException{
 

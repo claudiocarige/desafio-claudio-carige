@@ -4,7 +4,8 @@ import com.claudiocarige.desafioStartDB.models.Cardapio;
 import com.claudiocarige.desafioStartDB.models.representation.CardapioRepresentation;
 import com.claudiocarige.desafioStartDB.repositories.CardapioRepository;
 import com.claudiocarige.desafioStartDB.services.CardapioService;
-import com.claudiocarige.desafioStartDB.services.NoSuchElementException;
+import com.claudiocarige.desafioStartDB.services.exceptions.DataIntegrityViolationException;
+import com.claudiocarige.desafioStartDB.services.exceptions.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -32,17 +33,26 @@ public class CardapioServiceImpl implements CardapioService {
 
     @Override
     public Cardapio insert(CardapioRepresentation cardapioRepresentation) {
+        cardapioRepresentation.setId(null);
+        findByCodigo(cardapioRepresentation);
         return cardapioRepository.save(mapper.map(cardapioRepresentation, Cardapio.class));
     }
 
     @Override
-    public Cardapio Updat(Long id, Cardapio obj) {
-        return null;
+    public Cardapio update(CardapioRepresentation cardapioRepresentation) {
+        findById(cardapioRepresentation.getId());
+        findByCodigo(cardapioRepresentation);
+        return cardapioRepository.save(mapper.map(cardapioRepresentation, Cardapio.class));
     }
 
     @Override
     public void delete(Long id) {
 
     }
-
+    private void findByCodigo(CardapioRepresentation cardapioRepresentation){
+        Optional<Cardapio> cardapio = cardapioRepository.findByCodigo(cardapioRepresentation.getCodigo());
+        if(cardapio.isPresent()){
+            throw new DataIntegrityViolationException("Item já cadastrado.");
+        }
+    }
 }
