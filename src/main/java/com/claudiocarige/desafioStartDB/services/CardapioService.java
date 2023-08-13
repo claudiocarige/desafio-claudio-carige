@@ -1,19 +1,19 @@
 package com.claudiocarige.desafioStartDB.services;
 
-import com.claudiocarige.desafioStartDB.models.Cardapio;
-import com.claudiocarige.desafioStartDB.models.representation.CardapioRepresentation;
+import com.claudiocarige.desafioStartDB.models.ItensCardapio;
+import com.claudiocarige.desafioStartDB.models.representation.ItensCardapioRepresentation;
 
 import java.util.List;
 
 public interface CardapioService {
 
-    Cardapio findById(Long id);
+    ItensCardapio findById(Long id);
 
-    List<Cardapio> findAll();
+    List<ItensCardapio> findAll();
 
-    Cardapio insert(CardapioRepresentation obj);
+    ItensCardapio insert(ItensCardapioRepresentation obj);
 
-    Cardapio update(CardapioRepresentation obj);
+    ItensCardapio update(ItensCardapioRepresentation obj);
 
     void delete(Long id);
 

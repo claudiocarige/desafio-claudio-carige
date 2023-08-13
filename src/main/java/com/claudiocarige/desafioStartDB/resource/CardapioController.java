@@ -1,6 +1,6 @@
 package com.claudiocarige.desafioStartDB.resource;
 
-import com.claudiocarige.desafioStartDB.models.representation.CardapioRepresentation;
+import com.claudiocarige.desafioStartDB.models.representation.ItensCardapioRepresentation;
 import com.claudiocarige.desafioStartDB.services.CardapioService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,38 +21,38 @@ public class CardapioController {
     private final ModelMapper mapper;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CardapioRepresentation> findById(@PathVariable Long id){
-        return ResponseEntity.ok().body(mapper.map(cardapioService.findById(id), CardapioRepresentation.class));
+    public ResponseEntity<ItensCardapioRepresentation> findById(@PathVariable Long id){
+        return ResponseEntity.ok().body(mapper.map(cardapioService.findById(id), ItensCardapioRepresentation.class));
     }
 
     @GetMapping
-    public ResponseEntity<List<CardapioRepresentation>> findAll(){
+    public ResponseEntity<List<ItensCardapioRepresentation>> findAll(){
         return ResponseEntity.ok().body(cardapioService.findAll()
                 .stream()
-                .map(x -> mapper.map(x, CardapioRepresentation.class))
+                .map(x -> mapper.map(x, ItensCardapioRepresentation.class))
                 .collect(Collectors.toList()));
     }
 
     @PostMapping
-    public ResponseEntity<CardapioRepresentation>insert(@RequestBody CardapioRepresentation cardapioRepresentation){
+    public ResponseEntity<ItensCardapioRepresentation>insert(@RequestBody ItensCardapioRepresentation itensCardapioRepresentation){
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("{id}")
-                .buildAndExpand(cardapioService.insert(cardapioRepresentation).getId())
+                .buildAndExpand(cardapioService.insert(itensCardapioRepresentation).getId())
                 .toUri();
         return ResponseEntity.created(uri).build();
     }
 
     @PostMapping(value = "/{id}")
-    public ResponseEntity<CardapioRepresentation> update(@PathVariable Long id,
-                                    @RequestBody CardapioRepresentation cardapioRepresentation){
-        cardapioRepresentation.setId(id);
-        return ResponseEntity.ok().body(mapper.map(cardapioService.update(cardapioRepresentation),
-                CardapioRepresentation.class));
+    public ResponseEntity<ItensCardapioRepresentation> update(@PathVariable Long id,
+                                                              @RequestBody ItensCardapioRepresentation itensCardapioRepresentation){
+        itensCardapioRepresentation.setId(id);
+        return ResponseEntity.ok().body(mapper.map(cardapioService.update(itensCardapioRepresentation),
+                ItensCardapioRepresentation.class));
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<CardapioRepresentation> delete(@PathVariable Long id){
+    public ResponseEntity<ItensCardapioRepresentation> delete(@PathVariable Long id){
         cardapioService.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -11,7 +11,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-public class Cardapio {
+public class ItensCardapio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +21,10 @@ public class Cardapio {
     private String descricao;
     private Float valor;
 
-    public Cardapio(){
+    public ItensCardapio(){
     }
 
-    public Cardapio(String codigo, String descricao, Float valor) {
+    public ItensCardapio(String codigo, String descricao, Float valor) {
         this.codigo = codigo;
         this.descricao = descricao;
         this.valor = valor;
@@ -34,7 +34,7 @@ public class Cardapio {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cardapio cardapio = (Cardapio) o;
+        ItensCardapio cardapio = (ItensCardapio) o;
         return Objects.equals(id, cardapio.id) && Objects.equals(codigo, cardapio.codigo);
     }
 

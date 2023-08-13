@@ -1,8 +1,8 @@
 package com.claudiocarige.desafioStartDB.services.impl;
 
-import com.claudiocarige.desafioStartDB.models.Cardapio;
-import com.claudiocarige.desafioStartDB.models.representation.CardapioRepresentation;
-import com.claudiocarige.desafioStartDB.repositories.CardapioRepository;
+import com.claudiocarige.desafioStartDB.models.ItensCardapio;
+import com.claudiocarige.desafioStartDB.models.representation.ItensCardapioRepresentation;
+import com.claudiocarige.desafioStartDB.repositories.ItensCardapioRepository;
 import com.claudiocarige.desafioStartDB.services.CardapioService;
 import com.claudiocarige.desafioStartDB.services.exceptions.DataIntegrityViolationException;
 import com.claudiocarige.desafioStartDB.services.exceptions.NoSuchElementException;
@@ -17,42 +17,42 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CardapioServiceImpl implements CardapioService {
 
-    private final CardapioRepository cardapioRepository;
+    private final ItensCardapioRepository itensCardapioRepository;
     private final ModelMapper mapper;
 
     @Override
-    public Cardapio findById(Long id) {
-        Optional<Cardapio> cardapioObject = cardapioRepository.findById(id);
-        return cardapioObject.orElseThrow(() -> new NoSuchElementException("Objeto não encontrado."));
+    public ItensCardapio findById(Long id) {
+        Optional<ItensCardapio> itensCardapio = itensCardapioRepository.findById(id);
+        return itensCardapio.orElseThrow(() -> new NoSuchElementException("Objeto não encontrado."));
     }
 
     @Override
-    public List<Cardapio> findAll() {
-        return cardapioRepository.findAll();
+    public List<ItensCardapio> findAll() {
+        return itensCardapioRepository.findAll();
     }
 
     @Override
-    public Cardapio insert(CardapioRepresentation cardapioRepresentation) {
-        cardapioRepresentation.setId(null);
-        findByCodigo(cardapioRepresentation);
-        return cardapioRepository.save(mapper.map(cardapioRepresentation, Cardapio.class));
+    public ItensCardapio insert(ItensCardapioRepresentation itensCardapioRepresentation) {
+        itensCardapioRepresentation.setId(null);
+        findByCodigo(itensCardapioRepresentation);
+        return itensCardapioRepository.save(mapper.map(itensCardapioRepresentation, ItensCardapio.class));
     }
 
     @Override
-    public Cardapio update(CardapioRepresentation cardapioRepresentation) {
-        findById(cardapioRepresentation.getId());
-        findByCodigo(cardapioRepresentation);
-        return cardapioRepository.save(mapper.map(cardapioRepresentation, Cardapio.class));
+    public ItensCardapio update(ItensCardapioRepresentation itensCardapioRepresentation) {
+        findById(itensCardapioRepresentation.getId());
+        findByCodigo(itensCardapioRepresentation);
+        return itensCardapioRepository.save(mapper.map(itensCardapioRepresentation, ItensCardapio.class));
     }
 
     @Override
     public void delete(Long id) {
         findById(id);
-        cardapioRepository.deleteById(id);
+        itensCardapioRepository.deleteById(id);
     }
-    private void findByCodigo(CardapioRepresentation cardapioRepresentation){
-        Optional<Cardapio> cardapio = cardapioRepository.findByCodigo(cardapioRepresentation.getCodigo());
-        if(cardapio.isPresent()){
+    private void findByCodigo(ItensCardapioRepresentation itensCardapioRepresentation){
+        Optional<ItensCardapio> itensCardapio = itensCardapioRepository.findByCodigo(itensCardapioRepresentation.getCodigo());
+        if(itensCardapio.isPresent()){
             throw new DataIntegrityViolationException("Item já cadastrado.");
         }
     }

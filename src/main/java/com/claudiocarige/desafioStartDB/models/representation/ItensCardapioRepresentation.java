@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardapioRepresentation {
+public class ItensCardapioRepresentation {
 
     private Long id;
     private String codigo;
