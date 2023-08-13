@@ -2,6 +2,7 @@ package com.claudiocarige.desafioStartDB.models;
 
 import com.claudiocarige.desafioStartDB.models.enums.FormaPagamento;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,28 +24,29 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     private FormaPagamento formaPagamento;
 
-    @OneToMany
-    @CollectionTable(name = "lista_itens")
-    private List<ItensCardapio> listItensCardapio = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    private List<ItemPedido> listItensCardapio = new ArrayList<>();
 
     private Float valorTotalPedido;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataPedido = LocalDateTime.now();
 
-    public Pedido(FormaPagamento formaPagamento, List<ItensCardapio> listItensCardapio) {
+    public Pedido(FormaPagamento formaPagamento) {
         this.formaPagamento = formaPagamento;
-        this.listItensCardapio = listItensCardapio;
-        this.valorTotalPedido = calcularValorPedido(listItensCardapio);
+        this.valorTotalPedido = 0.0f;
     }
 
-    public Float calcularValorPedido(List<ItensCardapio> list){
-        if (!list.isEmpty()){
-            return list.stream()
-                    .map(item -> item.getValor() * item.getQuantidade())
+    public void addListItensCardapio(ItemPedido item){
+        listItensCardapio.add(item);
+    }
+    public void calcularValorPedido(){
+        if (!listItensCardapio.isEmpty()) {
+            valorTotalPedido = listItensCardapio.stream()
+                    .map(item -> item.getItem().getValor() * item.getQuantidade())
                     .reduce(0.0f, Float::sum);
         }
-        return 0.0f;
     }
 
 }

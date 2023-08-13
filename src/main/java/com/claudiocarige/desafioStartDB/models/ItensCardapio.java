@@ -28,7 +28,7 @@ public class ItensCardapio {
     public ItensCardapio(){
     }
 
-    public ItensCardapio(String codigo, String descricao, Float valor, ItemCategoria itemCategoria) {
+    public ItensCardapio(String codigo, String descricao, Float valor, ItemCategoria itemCategoria ) {
         this.codigo = codigo;
         this.descricao = descricao;
         this.valor = valor;
