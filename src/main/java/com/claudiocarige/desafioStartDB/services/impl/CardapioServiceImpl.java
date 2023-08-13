@@ -47,7 +47,8 @@ public class CardapioServiceImpl implements CardapioService {
 
     @Override
     public void delete(Long id) {
-
+        findById(id);
+        cardapioRepository.deleteById(id);
     }
     private void findByCodigo(CardapioRepresentation cardapioRepresentation){
         Optional<Cardapio> cardapio = cardapioRepository.findByCodigo(cardapioRepresentation.getCodigo());

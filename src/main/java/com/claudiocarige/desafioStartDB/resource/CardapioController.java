@@ -50,4 +50,10 @@ public class CardapioController {
         return ResponseEntity.ok().body(mapper.map(cardapioService.update(cardapioRepresentation),
                 CardapioRepresentation.class));
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<CardapioRepresentation> delete(@PathVariable Long id){
+        cardapioService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
  }
