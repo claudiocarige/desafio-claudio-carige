@@ -39,12 +39,12 @@ public class DBService {
         ItemPedido item04 = new ItemPedido(itensCardapio03, 2, pedido02);
 
         pedido01.setFormaPagamento(FormaPagamento.DEBITO);
-        pedido01.addListItensCardapio(item01);
-        pedido01.addListItensCardapio(item02);
+        pedido01.addItensCardapio(item01);
+        pedido01.addItensCardapio(item02);
         pedido01.calcularValorPedido();
         pedido02.setFormaPagamento(FormaPagamento.CREDITO);
-        pedido02.addListItensCardapio(item03);
-        pedido02.addListItensCardapio(item04);
+        pedido02.addItensCardapio(item03);
+        pedido02.addItensCardapio(item04);
         pedido02.calcularValorPedido();
 
         pedidoRepository.saveAll(Arrays.asList(pedido01,pedido02));

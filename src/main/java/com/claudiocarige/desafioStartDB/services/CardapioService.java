@@ -16,5 +16,4 @@ public interface CardapioService {
     ItensCardapio update(ItensCardapioRepresentation obj);
 
     void delete(Long id);
-
 }

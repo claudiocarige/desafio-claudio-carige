@@ -24,7 +24,6 @@ public class ItensCardapio {
     private ItemCategoria itemCategoria;
     private Float valor;
 
-
     public ItensCardapio(){
     }
 
