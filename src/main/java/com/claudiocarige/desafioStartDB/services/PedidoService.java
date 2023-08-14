@@ -1,7 +1,7 @@
 package com.claudiocarige.desafioStartDB.services;
 
 import com.claudiocarige.desafioStartDB.models.Pedido;
-import com.claudiocarige.desafioStartDB.models.representation.ItemPedidoRepresentation;
+import com.claudiocarige.desafioStartDB.models.representation.PedidoRepresentation;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ public interface PedidoService {
 
     List<Pedido> findAll();
 
-    Pedido insert(ItemPedidoRepresentation obj);
+    Pedido insert(PedidoRepresentation obj);
 
-    Pedido update(ItemPedidoRepresentation obj);
+    Pedido update(PedidoRepresentation obj);
 
     void delete(Long id);
 }
