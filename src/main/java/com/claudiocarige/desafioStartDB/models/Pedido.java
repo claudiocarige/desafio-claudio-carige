@@ -2,7 +2,6 @@ package com.claudiocarige.desafioStartDB.models;
 
 import com.claudiocarige.desafioStartDB.models.enums.FormaPagamento;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,9 +23,8 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     private FormaPagamento formaPagamento;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private List<ItemPedido> listItensCardapio = new ArrayList<>();
+    private List<ItemPedido> listPedidos = new ArrayList<>();
 
     private Float valorTotalPedido;
 
@@ -38,12 +36,16 @@ public class Pedido {
         this.valorTotalPedido = 0.0f;
     }
 
-    public void addListItensCardapio(ItemPedido item){
-        listItensCardapio.add(item);
+    public void addItensCardapio(ItemPedido item){
+        listPedidos.add(item);
+    }
+
+    public void removerItemPedido(ItemPedido item){
+        listPedidos.remove(item);
     }
     public void calcularValorPedido(){
-        if (!listItensCardapio.isEmpty()) {
-            valorTotalPedido = listItensCardapio.stream()
+        if (!listPedidos.isEmpty()) {
+            valorTotalPedido = listPedidos.stream()
                     .map(item -> item.getItem().getValor() * item.getQuantidade())
                     .reduce(0.0f, Float::sum);
         }
