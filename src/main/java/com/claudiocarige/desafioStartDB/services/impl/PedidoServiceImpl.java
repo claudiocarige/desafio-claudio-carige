@@ -78,7 +78,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
     private ItensCardapio findByCodigo(String codigo) {
         Optional<ItensCardapio> itensCardapio  = itensCardapioRepository.findByCodigo(codigo);
-        return itensCardapio.orElseThrow(() -> new NoSuchElementException("Pedido não encontrado."));
+        return itensCardapio.orElseThrow(() -> new NoSuchElementException("O item " + codigo + " é inválido!"));
     }
 
     private Float calcularValorDaCompra(Pedido pedido){
