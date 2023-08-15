@@ -1,5 +1,6 @@
 package com.claudiocarige.desafioStartDB.services;
 
+import com.claudiocarige.desafioStartDB.models.ItemPedidoInfo;
 import com.claudiocarige.desafioStartDB.models.Pedido;
 import com.claudiocarige.desafioStartDB.models.representation.PedidoRepresentation;
 
@@ -15,4 +16,6 @@ public interface PedidoService {
     Pedido update(PedidoRepresentation obj);
 
     void delete(Long id);
+
+    void listIsEmpty(List<ItemPedidoInfo> listPedidos);
 }

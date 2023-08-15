@@ -34,6 +34,7 @@ public class PedidoController {
 
     @PostMapping
     public ResponseEntity<PedidoRepresentation> insert(@RequestBody PedidoRepresentation pedidoRepresentation){
+        pedidoService.listIsEmpty(pedidoRepresentation.getListPedidos());
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("{id}")
