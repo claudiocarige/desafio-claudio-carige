@@ -36,19 +36,19 @@ public class Pedido {
         this.valorTotalPedido = 0.0f;
     }
 
-    public void addItensCardapio(ItemPedido item){
-        listPedidos.add(item);
+    public void addItensPedido(ItemPedido item) {
+            listPedidos.add(item);
     }
 
-    public void removerItemPedido(ItemPedido item){
+    public void removerItemPedido(ItemPedido item) {
         listPedidos.remove(item);
     }
-    public void calcularValorPedido(){
+
+    public void calcularValorPedido() {
         if (!listPedidos.isEmpty()) {
             valorTotalPedido = listPedidos.stream()
                     .map(item -> item.getItem().getValor() * item.getQuantidade())
                     .reduce(0.0f, Float::sum);
         }
     }
-
 }
