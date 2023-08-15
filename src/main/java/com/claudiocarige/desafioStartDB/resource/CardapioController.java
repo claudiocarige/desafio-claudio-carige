@@ -21,7 +21,7 @@ public class CardapioController {
     private final ModelMapper mapper;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ItensCardapioRepresentation> findById(@PathVariable Long id){
+    public ResponseEntity<ItensCardapioRepresentation> findById(@PathVariable Integer id){
         return ResponseEntity.ok().body(mapper.map(cardapioService.findById(id), ItensCardapioRepresentation.class));
     }
 
@@ -44,7 +44,7 @@ public class CardapioController {
     }
 
     @PostMapping(value = "/{id}")
-    public ResponseEntity<ItensCardapioRepresentation> update(@PathVariable Long id,
+    public ResponseEntity<ItensCardapioRepresentation> update(@PathVariable Integer id,
                                                               @RequestBody ItensCardapioRepresentation itensCardapioRepresentation){
         itensCardapioRepresentation.setId(id);
         return ResponseEntity.ok().body(mapper.map(cardapioService.update(itensCardapioRepresentation),
@@ -52,7 +52,7 @@ public class CardapioController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<ItensCardapioRepresentation> delete(@PathVariable Long id){
+    public ResponseEntity<ItensCardapioRepresentation> delete(@PathVariable Integer id){
         cardapioService.delete(id);
         return ResponseEntity.noContent().build();
     }

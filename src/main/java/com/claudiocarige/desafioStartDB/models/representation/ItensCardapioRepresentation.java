@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ItensCardapioRepresentation {
 
-    private Long id;
+    private Integer id;
     private String codigo;
     private String descricao;
     private Float valor;

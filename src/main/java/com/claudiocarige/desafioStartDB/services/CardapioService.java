@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CardapioService {
 
-    ItensCardapio findById(Long id);
+    ItensCardapio findById(Integer id);
 
     List<ItensCardapio> findAll();
 
@@ -15,5 +15,5 @@ public interface CardapioService {
 
     ItensCardapio update(ItensCardapioRepresentation obj);
 
-    void delete(Long id);
+    void delete(Integer id);
 }

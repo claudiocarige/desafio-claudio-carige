@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 
 public class ItemPedidoRepresentation {
-    private Long id;
+    private Integer id;
     private String item;
     private Integer quantidade;
     private Long numeroPedido;

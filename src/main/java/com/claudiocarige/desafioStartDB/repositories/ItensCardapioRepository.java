@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ItensCardapioRepository extends JpaRepository<ItensCardapio, Long> {
-
+public interface ItensCardapioRepository extends JpaRepository<ItensCardapio, Integer> {
     Optional<ItensCardapio> findByCodigo(String codigo);
 }

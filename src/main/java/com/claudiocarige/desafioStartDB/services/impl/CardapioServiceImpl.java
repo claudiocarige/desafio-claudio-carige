@@ -21,7 +21,7 @@ public class CardapioServiceImpl implements CardapioService {
     private final ModelMapper mapper;
 
     @Override
-    public ItensCardapio findById(Long id) {
+    public ItensCardapio findById(Integer id) {
         Optional<ItensCardapio> itensCardapio = itensCardapioRepository.findById(id);
         return itensCardapio.orElseThrow(() -> new NoSuchElementException("Objeto não encontrado."));
     }
@@ -46,7 +46,7 @@ public class CardapioServiceImpl implements CardapioService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         findById(id);
         itensCardapioRepository.deleteById(id);
     }
