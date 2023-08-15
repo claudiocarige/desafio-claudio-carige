@@ -26,18 +26,20 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> listPedidos = new ArrayList<>();
 
-    private Float valorTotalPedido;
+    private Float valorPedido;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataPedido = LocalDateTime.now();
 
+    private Float valorTotalPagamento;
+
     public Pedido(FormaPagamento formaPagamento) {
         this.formaPagamento = formaPagamento;
-        this.valorTotalPedido = 0.0f;
+        this.valorPedido = 0.0f;
     }
 
     public void addItensPedido(ItemPedido item) {
-            listPedidos.add(item);
+        listPedidos.add(item);
     }
 
     public void removerItemPedido(ItemPedido item) {
@@ -46,7 +48,7 @@ public class Pedido {
 
     public void calcularValorPedido() {
         if (!listPedidos.isEmpty()) {
-            valorTotalPedido = listPedidos.stream()
+            valorPedido = listPedidos.stream()
                     .map(item -> item.getItem().getValor() * item.getQuantidade())
                     .reduce(0.0f, Float::sum);
         }

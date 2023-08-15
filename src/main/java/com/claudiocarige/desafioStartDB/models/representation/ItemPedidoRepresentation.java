@@ -6,12 +6,11 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-
 public class ItemPedidoRepresentation {
-    private Integer id;
-    private String item;
-    private Integer quantidade;
-    private Long numeroPedido;
+    protected Integer id;
+    protected String item;
+    protected Integer quantidade;
+    protected Long numeroPedido;
 
     public ItemPedidoRepresentation (ItemPedido obj){
         this.id = obj.getId();
