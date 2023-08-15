@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,18 +17,18 @@ import java.time.LocalDateTime;
 public class PagamentoRepresentation {
     protected Long numeroPedido;
     protected FormaPagamento formaPagamento;
-    protected Float valorTotalPagamento;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "0.00")
+    protected BigDecimal valorTotalPagamento;
     @JsonFormat(pattern = "HH:mm")
     protected LocalDateTime tempoPedido;
-
 
     public PagamentoRepresentation(Pedido pedido){
         this.numeroPedido = pedido.getId();
         this.formaPagamento = pedido.getFormaPagamento();
-        this.valorTotalPagamento = pedido.getValorTotalPagamento();
-        this.tempoPedido = acrescentarTempoPreparo(pedido.getDataPedido());
+        this.valorTotalPagamento = new BigDecimal(pedido.getValorTotalPagamento()).setScale(2, RoundingMode.HALF_EVEN);
+        this.tempoPedido = acrescentarTempoPreparo();
     }
-    public LocalDateTime acrescentarTempoPreparo(LocalDateTime time){
-        return time.plusMinutes(20);
+    public LocalDateTime acrescentarTempoPreparo(){
+        return LocalDateTime.now().plusMinutes(20);
     }
 }
