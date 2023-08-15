@@ -13,7 +13,7 @@ public interface PedidoService {
 
     Pedido insert(PedidoRepresentation obj);
 
-    Pedido update(PedidoRepresentation obj);
+    Pedido update(Long id, PedidoRepresentation obj);
 
     void delete(Long id);
 

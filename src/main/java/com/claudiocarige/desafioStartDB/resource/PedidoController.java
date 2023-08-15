@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PedidoController {
 
+    public static final String ID = "/{id}";
     private final PedidoService pedidoService;
 
     @GetMapping
@@ -26,7 +27,7 @@ public class PedidoController {
                 .map(PedidoRepresentation::new)
                 .collect(Collectors.toList()));
     }
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = ID)
     public ResponseEntity<PedidoRepresentation> findById(@PathVariable Long id){
         Pedido pedido = pedidoService.findById(id);
         return ResponseEntity.ok().body(new PedidoRepresentation(pedido));
@@ -41,5 +42,12 @@ public class PedidoController {
                 .buildAndExpand(pedidoService.insert(pedidoRepresentation).getId())
                 .toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @PutMapping(value = ID)
+    public ResponseEntity<PedidoRepresentation> update(@PathVariable Long id, @RequestBody PedidoRepresentation pedidoRepresentation){
+        pedidoService.listIsEmpty(pedidoRepresentation.getListPedidos());
+        pedidoRepresentation.setId(id);
+        return ResponseEntity.ok().body(new PedidoRepresentation(pedidoService.update(id, pedidoRepresentation)));
     }
 }

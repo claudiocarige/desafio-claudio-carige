@@ -37,26 +37,14 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido insert(PedidoRepresentation pedidoRepresentation) {
-        Pedido pedido = new Pedido();
-        ItensCardapio itensCardapio;
-        pedido.setId(null);
-        pedido.setFormaPagamento(FormaPagamento.valueOf(pedidoRepresentation.getFormaPagamento()));
-        for (ItemPedidoInfo item:pedidoRepresentation.getListPedidos()) {
-            itensCardapio = findByCodigo(item.getCodigoItem());
-            if((item.getQuantidade() == 0) || (item.getQuantidade() < 0)){
-                throw new IllegalArgumentException("Quantidade inválida do item: "+ item.getCodigoItem());
-            }
-            ItemPedido itemPedido = new ItemPedido(itensCardapio, item.getQuantidade(),pedido);
-            isItemPrincipal(itemPedido, pedido);
-        }
-        pedido.calcularValorPedido();
-        pedido.setValorTotalPedido(calcularValorDaCompra(pedido));
+        Pedido pedido =  mapearPedidoRepresentation(pedidoRepresentation);
         return pedidoRepository.save(pedido);
     }
 
     @Override
-    public Pedido update(PedidoRepresentation obj) {
-        return null;
+    public Pedido update(Long id, PedidoRepresentation pedidoRepresentation) {
+        Pedido pedido =  mapearPedidoRepresentation(pedidoRepresentation);
+        return pedidoRepository.save(pedido);
     }
 
     @Override
@@ -70,32 +58,48 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("Não há itens no carrinho de compra!");
         }
     }
-
+    private Pedido mapearPedidoRepresentation(PedidoRepresentation pedidoRepresentation){
+        Pedido pedido = new Pedido();
+        ItensCardapio itensCardapio;
+        pedido.setId(pedidoRepresentation.getId());
+        pedido.setDataPedido(pedidoRepresentation.getDataPedido());
+        pedido.setFormaPagamento(FormaPagamento.valueOf(pedidoRepresentation.getFormaPagamento()));
+        for (ItemPedidoInfo item:pedidoRepresentation.getListPedidos()) {
+            itensCardapio = findByCodigo(item.getCodigoItem());
+            if((item.getQuantidade() == 0) || (item.getQuantidade() < 0)){
+                throw new IllegalArgumentException("Quantidade inválida do item: "+ item.getCodigoItem());
+            }
+            ItemPedido itemPedido = new ItemPedido(itensCardapio, item.getQuantidade(),pedido);
+            isItemPrincipal(itemPedido, pedido);
+        }
+        pedido.calcularValorPedido();
+        pedido.setValorTotalPagamento(calcularValorDaCompra(pedido));
+        return pedido;
+    }
     private ItensCardapio findByCodigo(String codigo) {
         Optional<ItensCardapio> itensCardapio  = itensCardapioRepository.findByCodigo(codigo);
         return itensCardapio.orElseThrow(() -> new NoSuchElementException("Pedido não encontrado."));
     }
 
     private Float calcularValorDaCompra(Pedido pedido){
-        if(pedido.getFormaPagamento().equals("DINHEIRO")){
-            pedido.setValorTotalPedido(pedido.getValorTotalPedido() * 0.95f);
-        }else if (pedido.getFormaPagamento().equals("CREDITO")){
-            pedido.setValorTotalPedido(pedido.getValorTotalPedido() * 1.03f);
+        if(pedido.getFormaPagamento().equals(FormaPagamento.DINHEIRO)){
+            pedido.setValorTotalPagamento(pedido.getValorPedido() * 0.95f);
+        }else if (pedido.getFormaPagamento().equals(FormaPagamento.CREDITO)){
+            pedido.setValorTotalPagamento(pedido.getValorPedido() * 1.03f);
         }
-        return pedido.getValorTotalPedido();
+        return pedido.getValorTotalPagamento();
     }
 
     private void isItemPrincipal(ItemPedido item, Pedido pedido) {
-        if (item.getItem().getItemCategoria() == ItemCategoria.PRINCIPAL) {
+        if (ItemCategoria.PRINCIPAL.equals(item.getItem().getItemCategoria())) {
             pedido.addItensPedido(item);
         } else {
             boolean existPrincipal = pedido.getListPedidos().stream()
                     .anyMatch(itemPedido -> ItemCategoria.PRINCIPAL.equals(itemPedido.getItem().getItemCategoria()));
-
             if (existPrincipal) {
                 pedido.addItensPedido(item);
             } else {
-                throw new IllegalArgumentException("Item extra não pode ser pedido sem o Item Principal");
+                throw new IllegalArgumentException("Item extra não pode ser pedido sem o principal");
             }
         }
     }
