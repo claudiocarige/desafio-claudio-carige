@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PedidoServiceImpl implements PedidoService {
@@ -37,13 +38,13 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido insert(PedidoRepresentation pedidoRepresentation) {
-        Pedido pedido =  mapearPedidoRepresentation(pedidoRepresentation);
+        Pedido pedido = mapearPedidoRepresentation(pedidoRepresentation);
         return pedidoRepository.save(pedido);
     }
 
     @Override
     public Pedido update(Long id, PedidoRepresentation pedidoRepresentation) {
-        Pedido pedido =  mapearPedidoRepresentation(pedidoRepresentation);
+        Pedido pedido = mapearPedidoRepresentation(pedidoRepresentation);
         return pedidoRepository.save(pedido);
     }
 
@@ -53,39 +54,50 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    public Pedido calcularValorParaPagamento(Long id) {
+        Pedido pedido = findById(id);
+        pedido.setValorTotalPagamento(calcularValorDaCompra(pedido));
+        return  pedidoRepository.save(pedido);
+    }
+
+    @Override
     public void listIsEmpty(List<ItemPedidoInfo> listPedidos) {
-        if(listPedidos.isEmpty()){
+        if (listPedidos.isEmpty()) {
             throw new IllegalArgumentException("Não há itens no carrinho de compra!");
         }
     }
-    private Pedido mapearPedidoRepresentation(PedidoRepresentation pedidoRepresentation){
+
+    private Pedido mapearPedidoRepresentation(PedidoRepresentation pedidoRepresentation) {
         Pedido pedido = new Pedido();
         ItensCardapio itensCardapio;
         pedido.setId(pedidoRepresentation.getId());
         pedido.setDataPedido(pedidoRepresentation.getDataPedido());
         pedido.setFormaPagamento(FormaPagamento.valueOf(pedidoRepresentation.getFormaPagamento()));
-        for (ItemPedidoInfo item:pedidoRepresentation.getListPedidos()) {
+        for (ItemPedidoInfo item : pedidoRepresentation.getListPedidos()) {
             itensCardapio = findByCodigo(item.getCodigoItem());
-            if((item.getQuantidade() == 0) || (item.getQuantidade() < 0)){
-                throw new IllegalArgumentException("Quantidade inválida do item: "+ item.getCodigoItem());
+            if ((item.getQuantidade() == 0) || (item.getQuantidade() < 0)) {
+                throw new IllegalArgumentException("Quantidade inválida do item: " + item.getCodigoItem());
             }
-            ItemPedido itemPedido = new ItemPedido(itensCardapio, item.getQuantidade(),pedido);
+            ItemPedido itemPedido = new ItemPedido(itensCardapio, item.getQuantidade(), pedido);
             isItemPrincipal(itemPedido, pedido);
         }
         pedido.calcularValorPedido();
-        pedido.setValorTotalPagamento(calcularValorDaCompra(pedido));
+
         return pedido;
     }
+
     private ItensCardapio findByCodigo(String codigo) {
-        Optional<ItensCardapio> itensCardapio  = itensCardapioRepository.findByCodigo(codigo);
+        Optional<ItensCardapio> itensCardapio = itensCardapioRepository.findByCodigo(codigo);
         return itensCardapio.orElseThrow(() -> new NoSuchElementException("O item " + codigo + " é inválido!"));
     }
 
-    private Float calcularValorDaCompra(Pedido pedido){
-        if(pedido.getFormaPagamento().equals(FormaPagamento.DINHEIRO)){
-            pedido.setValorTotalPagamento(pedido.getValorPedido() * 0.95f);
-        }else if (pedido.getFormaPagamento().equals(FormaPagamento.CREDITO)){
-            pedido.setValorTotalPagamento(pedido.getValorPedido() * 1.03f);
+    protected Float calcularValorDaCompra(Pedido pedido) {
+        if (pedido.getFormaPagamento().equals(FormaPagamento.DINHEIRO)) {
+            pedido.setValorTotalPagamento(pedido.getValorPedido()*0.95f);
+        } else if (pedido.getFormaPagamento().equals(FormaPagamento.CREDITO)) {
+            pedido.setValorTotalPagamento(pedido.getValorPedido()*1.03f);
+        }else{
+            pedido.setValorTotalPagamento(pedido.getValorPedido());
         }
         return pedido.getValorTotalPagamento();
     }
@@ -104,4 +116,3 @@ public class PedidoServiceImpl implements PedidoService {
         }
     }
 }
-//1

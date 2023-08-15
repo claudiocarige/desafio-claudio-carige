@@ -18,4 +18,6 @@ public interface PedidoService {
     void delete(Long id);
 
     void listIsEmpty(List<ItemPedidoInfo> listPedidos);
+
+    Pedido calcularValorParaPagamento(Long id);
 }

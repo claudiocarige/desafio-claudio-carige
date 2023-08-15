@@ -1,6 +1,7 @@
 package com.claudiocarige.desafioStartDB.resource;
 
 import com.claudiocarige.desafioStartDB.models.Pedido;
+import com.claudiocarige.desafioStartDB.models.representation.PagamentoRepresentation;
 import com.claudiocarige.desafioStartDB.models.representation.PedidoRepresentation;
 import com.claudiocarige.desafioStartDB.services.PedidoService;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +46,15 @@ public class PedidoController {
     }
 
     @PutMapping(value = ID)
-    public ResponseEntity<PedidoRepresentation> update(@PathVariable Long id, @RequestBody PedidoRepresentation pedidoRepresentation){
+    public ResponseEntity<PedidoRepresentation> update( @PathVariable Long id, @RequestBody PedidoRepresentation pedidoRepresentation){
         pedidoService.listIsEmpty(pedidoRepresentation.getListPedidos());
         pedidoRepresentation.setId(id);
         return ResponseEntity.ok().body(new PedidoRepresentation(pedidoService.update(id, pedidoRepresentation)));
     }
+
+    @GetMapping(value = "/pagamento/{id}")
+    public ResponseEntity<PagamentoRepresentation> calcularValorParaPagamento(@PathVariable Long id){
+        return ResponseEntity.ok().body(new PagamentoRepresentation(pedidoService.calcularValorParaPagamento(id)));
+    }
+
 }
