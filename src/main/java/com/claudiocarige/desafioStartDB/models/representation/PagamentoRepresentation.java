@@ -19,7 +19,7 @@ public class PagamentoRepresentation {
     protected FormaPagamento formaPagamento;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "0.00")
     protected BigDecimal valorTotalPagamento;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "mm")
     protected LocalDateTime tempoPedido;
 
     public PagamentoRepresentation(Pedido pedido){
