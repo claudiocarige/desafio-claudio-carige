@@ -57,4 +57,10 @@ public class PedidoController {
         return ResponseEntity.ok().body(new PagamentoRepresentation(pedidoService.calcularValorParaPagamento(id)));
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<PedidoRepresentation> delete(@PathVariable Long id){
+        pedidoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
