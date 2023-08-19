@@ -46,6 +46,10 @@ public class Pedido {
         listPedidos.remove(item);
     }
 
+    public void limparListaPedido(){
+        listPedidos.clear();
+    }
+
     public void calcularValorPedido() {
         if (!listPedidos.isEmpty()) {
             valorPedido = listPedidos.stream()
