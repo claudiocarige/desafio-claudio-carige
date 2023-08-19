@@ -6,8 +6,10 @@ import com.claudiocarige.desafioStartDB.services.exceptions.NoSuchElementExcepti
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,6 +47,14 @@ public class ResourceExceptionHandler {
 
         erro.setError(selecionarMensagem(ex.getMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<StandardError> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex,
+                                                                                WebRequest request){
+        StandardError erro = new StandardError(System.currentTimeMillis(), HttpStatus.METHOD_NOT_ALLOWED.value(),
+                "Método não Suportado", ex.getMessage(), request.getContextPath());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(erro);
+
     }
 
     private String selecionarMensagem(String ex){
