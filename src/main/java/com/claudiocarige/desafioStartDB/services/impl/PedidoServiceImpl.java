@@ -7,6 +7,7 @@ import com.claudiocarige.desafioStartDB.models.Pedido;
 import com.claudiocarige.desafioStartDB.models.enums.FormaPagamento;
 import com.claudiocarige.desafioStartDB.models.enums.ItemCategoria;
 import com.claudiocarige.desafioStartDB.models.representation.PedidoRepresentation;
+import com.claudiocarige.desafioStartDB.repositories.ItemPedidoRepository;
 import com.claudiocarige.desafioStartDB.repositories.ItensCardapioRepository;
 import com.claudiocarige.desafioStartDB.repositories.PedidoRepository;
 import com.claudiocarige.desafioStartDB.services.PedidoService;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +25,12 @@ public class PedidoServiceImpl implements PedidoService {
 
     private final ItensCardapioRepository itensCardapioRepository;
     private final PedidoRepository pedidoRepository;
+    private final ItemPedidoRepository itemPedidoRepository;
 
     @Override
     public Pedido findById(Long id) {
-        Optional<Pedido> pedido = pedidoRepository.findById(id);
-        return pedido.orElseThrow(() -> new NoSuchElementException("Pedido não encontrado."));
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Pedido não encontrado."));
     }
 
     @Override
@@ -38,26 +40,32 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido insert(PedidoRepresentation pedidoRepresentation) {
-        Pedido pedido = mapearPedidoRepresentation(pedidoRepresentation);
+        Pedido pedido = new Pedido();
+        mapearPedidoRepresentation(pedido, pedidoRepresentation);
         return pedidoRepository.save(pedido);
     }
 
     @Override
     public Pedido update(Long id, PedidoRepresentation pedidoRepresentation) {
-        Pedido pedido = mapearPedidoRepresentation(pedidoRepresentation);
+        listIsEmpty(pedidoRepresentation.getListPedidos());
+        Pedido pedido = findById(id);
+        List<Integer> listItemRemove = pedido.getListPedidos().stream().map(ItemPedido::getId).collect(Collectors.toList());
+        pedido.limparListaPedido();
+        mapearPedidoRepresentation(findById(id), pedidoRepresentation);
+        listItemRemove.forEach(itemPedidoRepository::deleteById);
         return pedidoRepository.save(pedido);
     }
 
     @Override
     public void delete(Long id) {
-
+        pedidoRepository.deleteById(id);
     }
 
     @Override
     public Pedido calcularValorParaPagamento(Long id) {
         Pedido pedido = findById(id);
-        pedido.setValorTotalPagamento(calcularValorDaCompra(pedido));
-        return  pedidoRepository.save(pedido);
+        calcularValorDaCompra(pedido);
+        return pedidoRepository.save(pedido);
     }
 
     @Override
@@ -67,47 +75,56 @@ public class PedidoServiceImpl implements PedidoService {
         }
     }
 
-    private Pedido mapearPedidoRepresentation(PedidoRepresentation pedidoRepresentation) {
-        Pedido pedido = new Pedido();
+    private void mapearPedidoRepresentation(Pedido pedido, PedidoRepresentation pedidoRepresentation) {
         ItensCardapio itensCardapio;
         pedido.setId(pedidoRepresentation.getId());
         pedido.setDataPedido(pedidoRepresentation.getDataPedido());
-        pedido.setFormaPagamento(FormaPagamento.valueOf(pedidoRepresentation.getFormaPagamento()));
+        FormaPagamento formaPagamento;
+        try {
+            formaPagamento = FormaPagamento.valueOf(pedidoRepresentation.getFormaPagamento());
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Forma de pagamento inválida!");
+        }
+        pedido.setFormaPagamento(formaPagamento);
         for (ItemPedidoInfo item : pedidoRepresentation.getListPedidos()) {
             itensCardapio = findByCodigo(item.getCodigoItem());
-            if ((item.getQuantidade() == 0) || (item.getQuantidade() < 0)) {
+            if (item.getQuantidade() <= 0) {
                 throw new IllegalArgumentException("Quantidade inválida do item: " + item.getCodigoItem());
             }
             ItemPedido itemPedido = new ItemPedido(itensCardapio, item.getQuantidade(), pedido);
-            isItemPrincipal(itemPedido, pedido);
+
+            isItemPrincipal(itemPedido, pedido, pedidoRepresentation);
         }
         pedido.calcularValorPedido();
-
-        return pedido;
     }
 
     private ItensCardapio findByCodigo(String codigo) {
-        Optional<ItensCardapio> itensCardapio = itensCardapioRepository.findByCodigo(codigo);
-        return itensCardapio.orElseThrow(() -> new NoSuchElementException("O item " + codigo + " é inválido!"));
+        return itensCardapioRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new NoSuchElementException("O item " + codigo + " é inválido!"));
     }
 
-    protected Float calcularValorDaCompra(Pedido pedido) {
+    protected void calcularValorDaCompra(Pedido pedido) {
         if (pedido.getFormaPagamento().equals(FormaPagamento.DINHEIRO)) {
-            pedido.setValorTotalPagamento(pedido.getValorPedido()*0.95f);
+            pedido.setValorTotalPagamento(pedido.getValorPedido() * 0.95f);
         } else if (pedido.getFormaPagamento().equals(FormaPagamento.CREDITO)) {
-            pedido.setValorTotalPagamento(pedido.getValorPedido()*1.03f);
-        }else{
+            pedido.setValorTotalPagamento(pedido.getValorPedido() * 1.03f);
+        } else {
             pedido.setValorTotalPagamento(pedido.getValorPedido());
         }
-        return pedido.getValorTotalPagamento();
     }
 
-    private void isItemPrincipal(ItemPedido item, Pedido pedido) {
+    private void isItemPrincipal(ItemPedido item, Pedido pedido, PedidoRepresentation pedidoRepresentation) {
         if (ItemCategoria.PRINCIPAL.equals(item.getItem().getItemCategoria())) {
-            pedido.addItensPedido(item);
+            if (pedido.getListPedidos().stream().noneMatch(x -> x.getItem().getCodigo().equals(item.getItem().getCodigo()))) {
+                pedido.addItensPedido(item);
+            }
         } else {
-            boolean existPrincipal = pedido.getListPedidos().stream()
-                    .anyMatch(itemPedido -> ItemCategoria.PRINCIPAL.equals(itemPedido.getItem().getItemCategoria()));
+            boolean existPrincipal = pedidoRepresentation.getListPedidos().stream()
+                    .anyMatch(x -> {
+                        String codigoItem = x.getCodigoItem();
+                        ItensCardapio cardapioItem = itensCardapioRepository.findItemByCodigo(codigoItem);
+                        return cardapioItem.getItemCategoria() == ItemCategoria.PRINCIPAL;
+                    });
             if (existPrincipal) {
                 pedido.addItensPedido(item);
             } else {
