@@ -12,7 +12,7 @@ public class ItemPedidoRepresentation {
     protected Integer quantidade;
     protected Long numeroPedido;
 
-    public ItemPedidoRepresentation (ItemPedido obj){
+    public ItemPedidoRepresentation(ItemPedido obj) {
         this.id = obj.getId();
         this.item = obj.getItem().getCodigo();
         this.quantidade = obj.getQuantidade();

@@ -19,6 +19,7 @@ public class DBService {
     private final PedidoServiceImpl pedidoService;
     private final ItensCardapioRepository itensCardapioRepository;
     private final PedidoRepository pedidoRepository;
+
     public void startDB() {
         ItensCardapio itensCardapio01 = new ItensCardapio("cafe", "Café", 3.00f, ItemCategoria.PRINCIPAL);
         ItensCardapio itensCardapio02 = new ItensCardapio("chantily", "Chantily (extra do Café)", 1.50f, ItemCategoria.EXTRA);
@@ -30,7 +31,7 @@ public class DBService {
         ItensCardapio itensCardapio08 = new ItensCardapio("combo2", "1 Café e 1 Sanduíche", 7.50f, ItemCategoria.COMBO);
 
         itensCardapioRepository.saveAll(Arrays.asList(itensCardapio01, itensCardapio02, itensCardapio03, itensCardapio04
-                ,itensCardapio05, itensCardapio06, itensCardapio07, itensCardapio08));
+                , itensCardapio05, itensCardapio06, itensCardapio07, itensCardapio08));
         Pedido pedido01 = new Pedido();
         Pedido pedido02 = new Pedido();
         Pedido pedido03 = new Pedido();

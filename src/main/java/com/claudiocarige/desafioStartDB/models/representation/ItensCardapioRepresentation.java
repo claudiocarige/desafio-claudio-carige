@@ -15,5 +15,4 @@ public class ItensCardapioRepresentation {
     protected String codigo;
     protected String descricao;
     protected Float valor;
-
 }

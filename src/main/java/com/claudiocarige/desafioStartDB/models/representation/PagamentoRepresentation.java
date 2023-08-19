@@ -22,13 +22,14 @@ public class PagamentoRepresentation {
     @JsonFormat(pattern = "mm")
     protected LocalDateTime tempoPedido;
 
-    public PagamentoRepresentation(Pedido pedido){
+    public PagamentoRepresentation(Pedido pedido) {
         this.numeroPedido = pedido.getId();
         this.formaPagamento = pedido.getFormaPagamento();
-        this.valorTotalPagamento = new BigDecimal(pedido.getValorTotalPagamento()).setScale(2, RoundingMode.HALF_EVEN);
+        this.valorTotalPagamento = BigDecimal.valueOf(pedido.getValorTotalPagamento()).setScale(2, RoundingMode.HALF_EVEN);
         this.tempoPedido = acrescentarTempoPreparo();
     }
-    public LocalDateTime acrescentarTempoPreparo(){
+
+    public LocalDateTime acrescentarTempoPreparo() {
         return LocalDateTime.now().plusMinutes(20);
     }
 }

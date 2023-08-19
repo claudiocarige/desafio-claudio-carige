@@ -21,12 +21,12 @@ public class CardapioController {
     private final ModelMapper mapper;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ItensCardapioRepresentation> findById(@PathVariable Integer id){
+    public ResponseEntity<ItensCardapioRepresentation> findById(@PathVariable Integer id) {
         return ResponseEntity.ok().body(mapper.map(cardapioService.findById(id), ItensCardapioRepresentation.class));
     }
 
     @GetMapping
-    public ResponseEntity<List<ItensCardapioRepresentation>> findAll(){
+    public ResponseEntity<List<ItensCardapioRepresentation>> findAll() {
         return ResponseEntity.ok().body(cardapioService.findAll()
                 .stream()
                 .map(x -> mapper.map(x, ItensCardapioRepresentation.class))
@@ -34,7 +34,8 @@ public class CardapioController {
     }
 
     @PostMapping
-    public ResponseEntity<ItensCardapioRepresentation>insert(@RequestBody ItensCardapioRepresentation itensCardapioRepresentation){
+    public ResponseEntity<ItensCardapioRepresentation> insert(
+                                               @RequestBody ItensCardapioRepresentation itensCardapioRepresentation) {
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("{id}")
@@ -45,15 +46,15 @@ public class CardapioController {
 
     @PostMapping(value = "/{id}")
     public ResponseEntity<ItensCardapioRepresentation> update(@PathVariable Integer id,
-                                                              @RequestBody ItensCardapioRepresentation itensCardapioRepresentation){
+                                                @RequestBody ItensCardapioRepresentation itensCardapioRepresentation) {
         itensCardapioRepresentation.setId(id);
         return ResponseEntity.ok().body(mapper.map(cardapioService.update(itensCardapioRepresentation),
                 ItensCardapioRepresentation.class));
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<ItensCardapioRepresentation> delete(@PathVariable Integer id){
+    public ResponseEntity<ItensCardapioRepresentation> delete(@PathVariable Integer id) {
         cardapioService.delete(id);
         return ResponseEntity.noContent().build();
     }
- }
+}

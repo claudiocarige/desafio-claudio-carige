@@ -14,31 +14,40 @@ import javax.servlet.http.HttpServletRequest;
 public class ResourceExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<StandardError> NoSuchElementException(NoSuchElementException ex, HttpServletRequest request) {
+    public ResponseEntity<StandardError> noSuchElementException(NoSuchElementException ex, HttpServletRequest request) {
         StandardError error = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
                 "Object not found ", ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<StandardError> dataIntegrityViolationException(DataIntegrityViolationException ex, HttpServletRequest request) {
+    public ResponseEntity<StandardError> dataIntegrityViolationException(DataIntegrityViolationException ex,
+                                                                         HttpServletRequest request) {
+
         StandardError error = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
                 "Integrity Violation", ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<StandardError> illegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+    public ResponseEntity<StandardError> illegalArgumentException(IllegalArgumentException ex,
+                                                                  HttpServletRequest request) {
+
         StandardError erro = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
                 "", ex.getMessage(), request.getRequestURI());
 
-        if (ex.getMessage().startsWith("Não há itens")){
-            erro.setError("Carrinho Vazio!");
-        } else if (ex.getMessage().startsWith("Item extra não")) {
-            erro.setError("Não há Item Principal no carrinho!");
-        } else if (ex.getMessage().startsWith("Quantidade inválida")) {
-            erro.setError("Quantidade do item menor ou igual a zero");
-        }
+        erro.setError(selecionarMensagem(ex.getMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    private String selecionarMensagem(String ex){
+        if (ex.startsWith("Não há itens")) {
+            return "Carrinho Vazio!";
+        } else if (ex.startsWith("Item extra não")) {
+            return "Não há Item Principal no carrinho!";
+        } else if (ex.startsWith("Quantidade inválida")) {
+            return  "Quantidade do item menor ou igual a zero";
+        }
+        return ex;
     }
 }

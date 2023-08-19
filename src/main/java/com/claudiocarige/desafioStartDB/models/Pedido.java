@@ -46,7 +46,7 @@ public class Pedido {
         listPedidos.remove(item);
     }
 
-    public void limparListaPedido(){
+    public void limparListaPedido() {
         listPedidos.clear();
     }
 

@@ -28,7 +28,7 @@ public class PedidoServiceImpl implements PedidoService {
     private final ItemPedidoRepository itemPedidoRepository;
 
     @Override
-    public Pedido findById(Long id) {
+    public Pedido findById(Long id) throws IllegalArgumentException {
         return pedidoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Pedido não encontrado."));
     }
@@ -69,14 +69,14 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public void listIsEmpty(List<ItemPedidoInfo> listPedidos) {
+    public void listIsEmpty(List<ItemPedidoInfo> listPedidos) throws IllegalArgumentException {
         if (listPedidos.isEmpty()) {
             throw new IllegalArgumentException("Não há itens no carrinho de compra!");
         }
     }
 
-    private void mapearPedidoRepresentation(Pedido pedido, PedidoRepresentation pedidoRepresentation) {
-        ItensCardapio itensCardapio;
+    private void mapearPedidoRepresentation(Pedido pedido, PedidoRepresentation pedidoRepresentation) throws IllegalArgumentException {
+
         pedido.setId(pedidoRepresentation.getId());
         pedido.setDataPedido(pedidoRepresentation.getDataPedido());
         FormaPagamento formaPagamento;
@@ -86,21 +86,25 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("Forma de pagamento inválida!");
         }
         pedido.setFormaPagamento(formaPagamento);
+        inserirItemInPedido(pedido, pedidoRepresentation);
+        pedido.calcularValorPedido();
+    }
+
+    private ItensCardapio findByCodigo(String codigo) throws NoSuchElementException {
+        return itensCardapioRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new NoSuchElementException("O item " + codigo + " é inválido!"));
+    }
+
+    private void inserirItemInPedido(Pedido pedido, PedidoRepresentation pedidoRepresentation){
+        ItensCardapio itensCardapio;
         for (ItemPedidoInfo item : pedidoRepresentation.getListPedidos()) {
             itensCardapio = findByCodigo(item.getCodigoItem());
             if (item.getQuantidade() <= 0) {
                 throw new IllegalArgumentException("Quantidade inválida do item: " + item.getCodigoItem());
             }
             ItemPedido itemPedido = new ItemPedido(itensCardapio, item.getQuantidade(), pedido);
-
             isItemPrincipal(itemPedido, pedido, pedidoRepresentation);
         }
-        pedido.calcularValorPedido();
-    }
-
-    private ItensCardapio findByCodigo(String codigo) {
-        return itensCardapioRepository.findByCodigo(codigo)
-                .orElseThrow(() -> new NoSuchElementException("O item " + codigo + " é inválido!"));
     }
 
     protected void calcularValorDaCompra(Pedido pedido) {
@@ -113,7 +117,7 @@ public class PedidoServiceImpl implements PedidoService {
         }
     }
 
-    private void isItemPrincipal(ItemPedido item, Pedido pedido, PedidoRepresentation pedidoRepresentation) {
+    private void isItemPrincipal(ItemPedido item, Pedido pedido, PedidoRepresentation pedidoRepresentation) throws IllegalArgumentException {
         if (ItemCategoria.PRINCIPAL.equals(item.getItem().getItemCategoria())) {
             if (pedido.getListPedidos().stream().noneMatch(x -> x.getItem().getCodigo().equals(item.getItem().getCodigo()))) {
                 pedido.addItensPedido(item);

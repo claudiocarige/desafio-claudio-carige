@@ -21,7 +21,7 @@ public class CardapioServiceImpl implements CardapioService {
     private final ModelMapper mapper;
 
     @Override
-    public ItensCardapio findById(Integer id) {
+    public ItensCardapio findById(Integer id) throws NoSuchElementException {
         Optional<ItensCardapio> itensCardapio = itensCardapioRepository.findById(id);
         return itensCardapio.orElseThrow(() -> new NoSuchElementException("Objeto não encontrado."));
     }
@@ -50,9 +50,10 @@ public class CardapioServiceImpl implements CardapioService {
         findById(id);
         itensCardapioRepository.deleteById(id);
     }
-    private void findByCodigo(ItensCardapioRepresentation itensCardapioRepresentation){
+
+    private void findByCodigo(ItensCardapioRepresentation itensCardapioRepresentation) throws DataIntegrityViolationException {
         Optional<ItensCardapio> itensCardapio = itensCardapioRepository.findByCodigo(itensCardapioRepresentation.getCodigo());
-        if(itensCardapio.isPresent()){
+        if (itensCardapio.isPresent()) {
             throw new DataIntegrityViolationException("Item já cadastrado.");
         }
     }
