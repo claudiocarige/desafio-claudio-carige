@@ -42,6 +42,7 @@ public class PedidoServiceImpl implements PedidoService {
     public Pedido insert(PedidoRepresentation pedidoRepresentation) {
         Pedido pedido = new Pedido();
         mapearPedidoRepresentation(pedido, pedidoRepresentation);
+        pedido.calcularValorPedido();
         return pedidoRepository.save(pedido);
     }
 
@@ -52,6 +53,7 @@ public class PedidoServiceImpl implements PedidoService {
         List<Integer> listItemRemove = pedido.getListPedidos().stream().map(ItemPedido::getId).collect(Collectors.toList());
         pedido.limparListaPedido();
         mapearPedidoRepresentation(findById(id), pedidoRepresentation);
+        pedido.calcularValorPedido();
         listItemRemove.forEach(itemPedidoRepository::deleteById);
         return pedidoRepository.save(pedido);
     }
@@ -79,15 +81,12 @@ public class PedidoServiceImpl implements PedidoService {
 
         pedido.setId(pedidoRepresentation.getId());
         pedido.setDataPedido(pedidoRepresentation.getDataPedido());
-        FormaPagamento formaPagamento;
         try {
-            formaPagamento = FormaPagamento.valueOf(pedidoRepresentation.getFormaPagamento());
+            pedido.setFormaPagamento(FormaPagamento.valueOf(pedidoRepresentation.getFormaPagamento()));
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("Forma de pagamento inválida!");
         }
-        pedido.setFormaPagamento(formaPagamento);
         inserirItemInPedido(pedido, pedidoRepresentation);
-        pedido.calcularValorPedido();
     }
 
     private ItensCardapio findByCodigo(String codigo) throws NoSuchElementException {
@@ -95,7 +94,7 @@ public class PedidoServiceImpl implements PedidoService {
                 .orElseThrow(() -> new NoSuchElementException("O item " + codigo + " é inválido!"));
     }
 
-    private void inserirItemInPedido(Pedido pedido, PedidoRepresentation pedidoRepresentation){
+    private void inserirItemInPedido(Pedido pedido, PedidoRepresentation pedidoRepresentation) throws IllegalArgumentException {
         ItensCardapio itensCardapio;
         for (ItemPedidoInfo item : pedidoRepresentation.getListPedidos()) {
             itensCardapio = findByCodigo(item.getCodigoItem());

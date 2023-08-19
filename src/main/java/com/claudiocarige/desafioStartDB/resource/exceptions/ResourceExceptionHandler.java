@@ -33,7 +33,7 @@ public class ResourceExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<StandardError> httpMessageNotReadableException(HttpMessageNotReadableException ex,
-                                                                         HttpServletRequest request){
+                                                                         HttpServletRequest request) {
         StandardError erro = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
                 "Invalid JSON", "Erro no JSON enviado.", request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
@@ -48,22 +48,24 @@ public class ResourceExceptionHandler {
         erro.setError(selecionarMensagem(ex.getMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<StandardError> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex,
-                                                                                WebRequest request){
+                                                                                WebRequest request) {
         StandardError erro = new StandardError(System.currentTimeMillis(), HttpStatus.METHOD_NOT_ALLOWED.value(),
                 "Método não Suportado", ex.getMessage(), request.getContextPath());
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(erro);
 
     }
 
-    private String selecionarMensagem(String ex){
+    private String selecionarMensagem(String ex) {
+
         if (ex.startsWith("Não há itens")) {
             return "Carrinho Vazio!";
         } else if (ex.startsWith("Item extra não")) {
             return "Não há Item Principal no carrinho!";
         } else if (ex.startsWith("Quantidade inválida")) {
-            return  "Quantidade do item menor ou igual a zero";
+            return "Quantidade do item menor ou igual a zero";
         }
         return ex;
     }
